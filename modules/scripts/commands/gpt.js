@@ -13,8 +13,11 @@ module.exports.config = {
 
 module.exports.run = async function ({ event, args, api }) {
   if (!api || typeof api.sendMessage !== "function") {
-    console.error("API object is missing or invalid.");
-    return;
+    console.error("API object is missing or invalid. Using fallback.");
+    api = {
+      sendMessage: (message, recipientId) =>
+        console.log(`Fallback: Sending message to ${recipientId}: ${message}`),
+    };
   }
 
   if (event.type === "message") {
