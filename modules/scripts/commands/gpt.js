@@ -2,7 +2,7 @@ const axios = require("axios");
 
 module.exports.config = {
   name: "ai",
-  author: "okechukwu",
+  author: "Yan Maglinte",
   version: "1.0",
   category: "AI",
   description: "Chat with OkeyAI",
@@ -13,11 +13,16 @@ module.exports.config = {
 
 module.exports.run = async function ({ event, args, api }) {
   if (!api || typeof api.sendMessage !== "function") {
-    console.error("API object is missing or invalid. Using fallback.");
+    console.error("API object is missing or invalid.");
     api = {
       sendMessage: (message, recipientId) =>
-        console.log(`Fallback: Sending message to ${recipientId}: ${message}`),
+        console.log(`[Fallback] Sending message to ${recipientId}: ${message}`),
     };
+    api.sendMessage(
+      "The bot framework is not providing the required API object. Please check the implementation.",
+      event.sender.id
+    );
+    return;
   }
 
   if (event.type === "message") {
@@ -31,11 +36,9 @@ module.exports.run = async function ({ event, args, api }) {
         `https://api.okeymeta.com.ng/api/ssailm/model/okeyai3.0-vanguard/okeyai?input=${encodeURIComponent(prompt)}`
       );
 
-      // Debug the full API response for clarity
       console.log("API Response:", response.data);
 
       if (response.data && response.data.response) {
-        // Extract the AI's response and send it to the user
         api.sendMessage(response.data.response, event.sender.id);
       } else {
         api.sendMessage("Unexpected response from the AI. Please try again later.", event.sender.id);
