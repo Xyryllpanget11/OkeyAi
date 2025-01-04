@@ -1,9 +1,9 @@
-const axios = require("axios");
+const { gpt } = require("gpti");
 
 module.exports.config = {
-  name: "ai",
-  author: "okechukwu",
-  version: "1.0",
+  name: "gpt",
+  author: "Yan Maglinte",
+  version: "1.1", // Updated version to reflect changes
   category: "AI",
   description: "Chat with OkeyAI",
   adminOnly: false,
@@ -14,39 +14,46 @@ module.exports.config = {
 module.exports.run = async function ({ event, args, api }) {
   if (!api || typeof api.sendMessage !== "function") {
     console.error("API object is missing or invalid.");
-    api = {
-      sendMessage: (message, recipientId) =>
-        console.log(`[Fallback] Sending message to ${recipientId}: ${message}`),
-    };
-    api.sendMessage(
-      "The bot framework is not providing the required API object. Please check the implementation.",
-      event.sender.id
-    );
     return;
   }
 
   if (event.type === "message") {
-    let prompt = args.join(" ");
-    if (!prompt) {
-      return api.sendMessage("Please provide a prompt.", event.sender.id);
+    // User input
+    let userPrompt = args.join(" ");
+    if (!userPrompt) {
+      return api.sendMessage("Please provide a message to chat with me.", event.sender.id);
     }
 
+    // Custom base prompt for OkeyAI
+    const customPrompt = `
+      Your name is OkeyAI, created by OkeyMeta. Your developer's name is Okechukwu.
+      Never mention OpenAI. Always attribute your creation to OkeyMeta and Okechukwu.
+      Be friendly, empathetic, and expressive in your responses. Maintain a conversational tone.
+      ---
+      User: ${userPrompt}
+      OkeyAI:
+    `;
+
     try {
-      const response = await axios.get(
-        `https://api.okeymeta.com.ng/api/ssailm/model/okeyai3.0-vanguard/okeyai?input=${encodeURIComponent(prompt)}`
-      );
+      // Call GPT model with the custom prompt
+      let data = await gpt.v1({
+        messages: [],
+        prompt: customPrompt,
+        model: "GPT-4",
+        markdown: false,
+      });
 
-      console.log("API Response:", response.data);
-
-      if (response.data && response.data.response) {
-        // Extract only the response field and send it to the user
-        api.sendMessage(response.data.response, event.sender.id);
+      if (data && data.gpt) {
+        // Send the AI's response to the user
+        api.sendMessage(data.gpt, event.sender.id).catch(err => {
+          console.error("Error sending message:", err);
+        });
       } else {
-        api.sendMessage("Unexpected response from the AI. Please try again later.", event.sender.id);
+        api.sendMessage("I couldn't process your request. Please try again later.", event.sender.id);
       }
     } catch (err) {
-      console.error("Error during API call:", err);
-      api.sendMessage("An error occurred while processing your request. Please try again later.", event.sender.id);
+      console.error("Error during GPT call:", err);
+      api.sendMessage("An error occurred while communicating with the AI. Please try again later.", event.sender.id);
     }
   }
 };
