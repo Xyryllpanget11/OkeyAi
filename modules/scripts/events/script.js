@@ -20,13 +20,13 @@ module.exports.run = async function({ event, args }) {
             template_type: 'generic',
             elements: [
               {
-                title: 'Hey there newbie!', // The title of the generic message
-                subtitle: 'Thank you for using Pagebot. Leave a like on my repository and support my work.', // The subtitle of the message
-                image_url: 'https://i.ibb.co/dJzSv5Q/pagebot.jpg', // The image URL
+                title: 'Hey there OkeyAi users!', // The title of the generic message
+                subtitle: 'Thank you for using OkeyAi. Leave a like on my repository and support my work.', // The subtitle of the message
+                image_url: 'https://i.ibb.co/brhM71M/image.png', // The image URL
                 buttons: [
                   {
                     type: 'web_url',
-                    url: 'https://www.facebook.com/yandeva.me',
+                    url: 'https://www.facebook.com/realokechukwu',
                     title: 'Check my Profile'
                   },
                   {
