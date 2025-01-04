@@ -1,58 +1,38 @@
-const { gpt } = require("gpti");
+const axios = require('axios');  // Import axios for making HTTP requests
 
 module.exports.config = {
-  name: "gpt",
-  author: "Yan Maglinte",
-  version: "1.1", // Updated version
-  category: "AI",
-  description: "Chat with OkeyAI",
-  adminOnly: false,
-  usePrefix: false,
-  cooldown: 10,
+  name: "ai",  // Name of the command
+  author: "okechukwu",  // Author's name
+  version: "1.0",  // Version of the command
+  category: "AI",  // Category for the command
+  description: "Chat with OkeyAI",  // Description of what the command does
+  adminOnly: false,  // Whether it's for admin only
+  usePrefix: false,  // Whether to use a prefix for the command
+  cooldown: 10,  // Cooldown time in seconds
 };
 
 module.exports.run = async function ({ event, args, api }) {
-  // Check if api is properly passed and has sendMessage method
-  if (!api || typeof api.sendMessage !== "function") {
-    console.error("API object is missing or invalid.");
-    return;
+  // If no message is provided, prompt the user
+  let userPrompt = args.join(" ");
+  if (!userPrompt) {
+    return api.sendMessage("Please provide a message to chat with OkeyAI.", event.sender.id);
   }
 
-  if (event.type === "message") {
-    let userPrompt = args.join(" ");
-    if (!userPrompt) {
-      return api.sendMessage("Please provide a message to chat with me.", event.sender.id);
+  try {
+    // Make the request to the OkeyAI API with the user input
+    const response = await axios.get(`https://api.okeymeta.com.ng/api/ssailm/model/okeyai3.0-vanguard/okeyai?input=${encodeURIComponent(userPrompt)}`);
+
+    // Check if the API returns a response and extract it
+    if (response.data && response.data.response) {
+      // Send the AI's response back to the user
+      api.sendMessage(response.data.response, event.sender.id);
+    } else {
+      // Handle case where the API response does not contain the expected data
+      api.sendMessage("Sorry, I couldn't get a response from the AI. Please try again.", event.sender.id);
     }
-
-    // Custom base prompt for OkeyAI
-    const customPrompt = `
-      Your name is OkeyAI, created by OkeyMeta. Your developer's name is Okechukwu.
-      Never mention OpenAI. Always attribute your creation to OkeyMeta and Okechukwu.
-      Be friendly, empathetic, and expressive in your responses. Maintain a conversational tone.
-      ---
-      User: ${userPrompt}
-      OkeyAI:
-    `;
-
-    try {
-      // Call GPT model with the custom prompt
-      let data = await gpt.v1({
-        messages: [],
-        prompt: customPrompt,
-        model: "GPT-4",
-        markdown: false,
-      });
-
-      if (data && data.gpt) {
-        api.sendMessage(data.gpt, event.sender.id).catch(err => {
-          console.error("Error sending message:", err);
-        });
-      } else {
-        api.sendMessage("I couldn't process your request. Please try again later.", event.sender.id);
-      }
-    } catch (err) {
-      console.error("Error during GPT call:", err);
-      api.sendMessage("An error occurred while communicating with the AI. Please try again later.", event.sender.id);
-    }
+  } catch (err) {
+    // Catch any errors and send an error message
+    console.error("Error during API call:", err);
+    api.sendMessage("An error occurred while communicating with the AI. Please try again later.", event.sender.id);
   }
 };
