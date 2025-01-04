@@ -1,8 +1,8 @@
 const axios = require('axios');  // Import axios for making HTTP requests
 
 module.exports.config = {
-  name: "ai",  // Name of the command
-  author: "okechukwu",  // Author's name
+  name: "okeyai",  // Name of the command
+  author: "Yan Maglinte",  // Author's name
   version: "1.0",  // Version of the command
   category: "AI",  // Category for the command
   description: "Chat with OkeyAI",  // Description of what the command does
@@ -12,6 +12,15 @@ module.exports.config = {
 };
 
 module.exports.run = async function ({ event, args, api }) {
+  // Log the 'api' object to ensure it is passed correctly
+  console.log("API object:", api);
+
+  // Check if api is defined and has sendMessage method
+  if (!api || typeof api.sendMessage !== "function") {
+    console.error("API object is missing or invalid.");
+    return;
+  }
+
   // If no message is provided, prompt the user
   let userPrompt = args.join(" ");
   if (!userPrompt) {
