@@ -31,14 +31,18 @@ module.exports.run = async function ({ event, args, api }) {
         `https://api.okeymeta.com.ng/api/ssailm/model/okeyai3.0-vanguard/okeyai?input=${encodeURIComponent(prompt)}`
       );
 
-      if (response.data && response.data.result) {
-        api.sendMessage(response.data.result, event.sender.id);
+      // Debug the full API response for clarity
+      console.log("API Response:", response.data);
+
+      if (response.data && response.data.response) {
+        // Extract the AI's response and send it to the user
+        api.sendMessage(response.data.response, event.sender.id);
       } else {
-        api.sendMessage("Unexpected response from the AI.", event.sender.id);
+        api.sendMessage("Unexpected response from the AI. Please try again later.", event.sender.id);
       }
     } catch (err) {
-      console.error(err);
-      api.sendMessage("An error occurred while processing your request.", event.sender.id);
+      console.error("Error during API call:", err);
+      api.sendMessage("An error occurred while processing your request. Please try again later.", event.sender.id);
     }
   }
 };
