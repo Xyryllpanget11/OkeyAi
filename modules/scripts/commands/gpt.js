@@ -1,8 +1,8 @@
 const { gpt } = require("gpti");
 
 module.exports.config = {
-  name: "gpt",
-  author: "Yan Maglinte",
+  name: "ai",
+  author: "okechukwu",
   version: "1.1", // Updated version to reflect changes
   category: "AI",
   description: "Chat with OkeyAI",
