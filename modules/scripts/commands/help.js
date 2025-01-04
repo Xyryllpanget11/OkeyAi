@@ -56,7 +56,7 @@ module.exports.run = function ({ event, args }) {
       message += `╰───────────────\n`; // Add extra space after each category
     });
 
-    message += "Thank you for using Uzuki Mikata! If you encounter any issues or bugs, please contact my owner:\n";
+    message += "Thank you for using OkeyAi! If you encounter any issues or bugs, please contact my owner:\n";
     message += "\u2709 Økechukwu Nwaøzør \n";
 
     // Send the message to the user
