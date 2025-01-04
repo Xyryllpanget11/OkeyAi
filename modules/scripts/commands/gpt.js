@@ -1,8 +1,8 @@
 const { gpt } = require("gpti");
 
 module.exports.config = {
-  name: "ai",
-  author: "okechukwu",
+  name: "gpt",
+  author: "Yan Maglinte",
   version: "1.1", // Updated version to reflect changes
   category: "AI",
   description: "Chat with OkeyAI",
@@ -13,9 +13,12 @@ module.exports.config = {
 
 module.exports.run = async function ({ event, args, api }) {
   if (event.type === "message") {
-    let userPrompt = args.join(" ");
+    let userPrompt = args.join(" ").trim();
     if (!userPrompt) {
-      return api.sendMessage("Please provide a message to chat with me.", event.sender.id);
+      return api.sendMessage(
+        "Please provide a message to chat with me.",
+        event.threadID
+      );
     }
 
     // Custom base prompt for OkeyAI
@@ -38,15 +41,21 @@ module.exports.run = async function ({ event, args, api }) {
       });
 
       if (data && data.gpt) {
-        api.sendMessage(data.gpt, event.sender.id).catch(err => {
+        api.sendMessage(data.gpt, event.threadID).catch((err) => {
           console.error("Error sending message:", err);
         });
       } else {
-        api.sendMessage("I couldn't process your request. Please try again later.", event.sender.id);
+        api.sendMessage(
+          "I couldn't process your request. Please try again later.",
+          event.threadID
+        );
       }
     } catch (err) {
       console.error("Error during GPT call:", err);
-      api.sendMessage("An error occurred while communicating with the AI. Please try again later.", event.sender.id);
+      api.sendMessage(
+        "An error occurred while communicating with the AI. Please try again later.",
+        event.threadID
+      );
     }
   }
 };
