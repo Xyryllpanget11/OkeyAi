@@ -12,13 +12,7 @@ module.exports.config = {
 };
 
 module.exports.run = async function ({ event, args, api }) {
-  if (!api || typeof api.sendMessage !== "function") {
-    console.error("API object is missing or invalid.");
-    return;
-  }
-
   if (event.type === "message") {
-    // User input
     let userPrompt = args.join(" ");
     if (!userPrompt) {
       return api.sendMessage("Please provide a message to chat with me.", event.sender.id);
@@ -44,7 +38,6 @@ module.exports.run = async function ({ event, args, api }) {
       });
 
       if (data && data.gpt) {
-        // Send the AI's response to the user
         api.sendMessage(data.gpt, event.sender.id).catch(err => {
           console.error("Error sending message:", err);
         });
