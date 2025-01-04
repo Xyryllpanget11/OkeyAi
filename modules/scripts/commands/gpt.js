@@ -29,7 +29,7 @@ module.exports.run = async function ({ event, args, api }) {
 
   try {
     // Make the request to the OkeyAI API with the user input
-    const response = await axios.get(`https://api.okeymeta.com.ng/api/ssailm/model/okeyai3.0-vanguard/okeyai?input=${encodeURIComponent(userPrompt)}`);
+    const response = await axios.get(`https://www.niroblr.cloud/api/gpt4?prompt=${encodeURIComponent(userPrompt)}`);
 
     // Check if the API returns a response and extract it
     if (response.data && response.data.response) {
