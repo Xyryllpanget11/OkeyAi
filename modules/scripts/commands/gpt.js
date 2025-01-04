@@ -2,7 +2,7 @@ const axios = require("axios");
 
 module.exports.config = {
   name: "ai",
-  author: "Yan Maglinte",
+  author: "okechukwu",
   version: "1.0",
   category: "AI",
   description: "Chat with OkeyAI",
@@ -39,6 +39,7 @@ module.exports.run = async function ({ event, args, api }) {
       console.log("API Response:", response.data);
 
       if (response.data && response.data.response) {
+        // Extract only the response field and send it to the user
         api.sendMessage(response.data.response, event.sender.id);
       } else {
         api.sendMessage("Unexpected response from the AI. Please try again later.", event.sender.id);
