@@ -1,42 +1,69 @@
-const { gpt } = require("gpti");
+const axios = require("axios");
 
 module.exports.config = {
-  name: "gpt",
+  name: "ai",
   author: "Yan Maglinte",
   version: "1.0",
   category: "AI",
-  description: "Chat with gpt",
+  description: "Interact with OkeyAI Vanguard",
   adminOnly: false,
   usePrefix: false,
   cooldown: 3,
 };
 
-module.exports.run = async function ({ event, args }) {
+module.exports.run = async function ({ event, args, api }) {
   if (event.type === "message") {
     let prompt = args.join(" ");
+    if (!prompt) {
+      return api.sendMessage("Please provide a prompt.", event.sender.id);
+    }
 
-    let data = await gpt.v1({
-        messages: [],
-        prompt: prompt,
-        model: "GPT-4",
-        markdown: false
-    });
+    try {
+      const response = await axios.post(
+        "https://api.okeymeta.com.ng/api/ssailm/model/okeyai3.0-vanguard/okeyai",
+        {
+          prompt: prompt,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    api.sendMessage(data.gpt, event.sender.id).catch(err => {
-        console.log(err);
-    });
+      if (response.data && response.data.result) {
+        api.sendMessage(response.data.result, event.sender.id);
+      } else {
+        api.sendMessage("Received an unexpected response from the AI.", event.sender.id);
+      }
+    } catch (error) {
+      console.error(error);
+      api.sendMessage("An error occurred while communicating with the AI.", event.sender.id);
+    }
   } else if (event.type === "message_reply") {
-    let prompt = `Message: "${args.join(" ")}\n\nReplying to: ${event.message.reply_to.text}`;
+    let prompt = `Message: "${args.join(" ")}"\n\nReplying to: ${event.message.reply_to.text}`;
 
-    let data = await gpt.v1({
-        messages: [],
-        prompt: prompt,
-        model: "GPT-4",
-        markdown: false
-    });
+    try {
+      const response = await axios.post(
+        "https://api.okeymeta.com.ng/api/ssailm/model/okeyai3.0-vanguard/okeyai",
+        {
+          prompt: prompt,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    api.sendMessage(data.gpt, event.sender.id).catch(err => {
-        console.log(err);
-    });
+      if (response.data && response.data.result) {
+        api.sendMessage(response.data.result, event.sender.id);
+      } else {
+        api.sendMessage("Received an unexpected response from the AI.", event.sender.id);
+      }
+    } catch (error) {
+      console.error(error);
+      api.sendMessage("An error occurred while communicating with the AI.", event.sender.id);
+    }
   }
 };
