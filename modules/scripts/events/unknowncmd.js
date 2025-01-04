@@ -20,7 +20,7 @@ module.exports.run = async function ({ event, args }) {
 
     if (!isValidCommand) {
       // Send a friendly message for any unrecognized input, including simple words like "hello"
-      const responseMessage = `Hello User! thank you for using our bot! You can view all commands by typing /help.`;
+      const responseMessage = `Hello User! thank you for using our bot! You can view all commands by typing help.`;
       api.sendMessage(responseMessage, event.sender.id);
     }
   }
